@@ -8,7 +8,7 @@ node {
     parametersMap['param3'] = ['var': 'value3']
     
     
-    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/nadavamitay/tests.git']])
+    // checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/nadavamitay/tests.git']])
     
     // Iterate over each parameter and create a stage for it
     parametersList.each { param ->

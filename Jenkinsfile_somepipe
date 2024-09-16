@@ -1,36 +1,54 @@
-
+// Define pipeline parameters
+properties([
+    string(name: 'BUILD_ENV', defaultValue: '', description: 'Specify which component to build. Leave empty to build all.'),
+    choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Select the environment for deployment.')
+])
 
 node {
-        
-    stage ("initialization") {
-        
-        print("Initializing pipeline...")    
+    // Define the version based on build number and date
+    def buildVersion = "1.0.0-${env.BUILD_NUMBER}"
+    echo "Build Version: ${buildVersion}"
+
+    stage("initialization") {
+        echo "Initializing pipeline..."
         checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/nadavamitay/tests.git']])
     }
     
-    stage ("building"){
-        
-        print("Building the project...")
-        def parallelTasks = [:]
-        
-        if ( env.BUILD_ENV == "componentA" || env.BUILD_ENV == ""){
-            parallelTasks["Building component A"] = {
-                print("Building component A")
-            }
-        }
-        
-        if ( env.BUILD_ENV == "componentB" || env.BUILD_ENV == ""){
-            parallelTasks["Building component B"] = {
-                print("Building component B")                
-            }
-        }
+    stage("building") {
+        echo "Building the project..."
 
+        def parallelTasks = [:] // Initialize an empty map for parallel tasks
+
+        // Define tasks based on BUILD_ENV
+        if (env.BUILD_ENV == 'componentA' || env.BUILD_ENV == '') {
+            parallelTasks["Building component A"] = {
+                echo "Building component A with version ${buildVersion} for environment ${env.ENVIRONMENT}"
+                // Simulate building component A
+            }
+        }
+        
+        if (env.BUILD_ENV == 'componentB' || env.BUILD_ENV == '') {
+            parallelTasks["Building component B"] = {
+                echo "Building component B with version ${buildVersion} for environment ${env.ENVIRONMENT}"
+                // Simulate building component B
+            }
+        }
+        
+        // Execute parallel tasks
         parallel parallelTasks
     }
-    
-    stage ("post-build"){
-        archiveArtifacts artifacts: '**/README.md', allowEmptyArchive: true
+
+    stage("post-build") {
+        echo "Post-build actions..."
         
-             
+        // Archive artifacts
+        archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
+        
+        // Send Slack notification (requires Slack Notification plugin configuration)
+        slackSend(
+            channel: '#build-notifications',
+            color: 'good',
+            message: "Build #${env.BUILD_NUMBER} (${env.BUILD_ENV}) completed with version ${buildVersion} for environment ${env.ENVIRONMENT}."
+        )
     }
 }

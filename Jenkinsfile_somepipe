@@ -1,5 +1,5 @@
 // Define pipeline parameters
-properties([
+parameters([
     string(name: 'BUILD_ENV', defaultValue: '', description: 'Specify which component to build. Leave empty to build all.'),
     choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'prod'], description: 'Select the environment for deployment.')
 ])

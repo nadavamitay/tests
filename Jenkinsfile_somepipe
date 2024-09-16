@@ -42,13 +42,9 @@ node {
         echo "Post-build actions..."
         
         // Archive artifacts
-        archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
+        archiveArtifacts artifacts: '**/README.md', allowEmptyArchive: true
         
-        // Send Slack notification (requires Slack Notification plugin configuration)
-        slackSend(
-            channel: '#build-notifications',
-            color: 'good',
-            message: "Build #${env.BUILD_NUMBER} (${env.BUILD_ENV}) completed with version ${buildVersion} for environment ${env.ENVIRONMENT}."
-        )
+
+
     }
 }

@@ -3,7 +3,7 @@ properties([parameters([string(defaultValue: '', name: 'BUILD_ENV')])])
 
 node {
     // Define the version based on build number and date
-   
+    env.BUILD_ENV = params.BUILD_ENV
     def buildVersion = "1.0.0-${env.BUILD_NUMBER}"
     echo "Build Version: ${buildVersion}"
 

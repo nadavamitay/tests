@@ -31,10 +31,6 @@ node {
     stage ("post-build"){
         archiveArtifacts artifacts: '**/README.md', allowEmptyArchive: true
         
-        emailext (
-            body: 'The build is complete. Check the build details for more information.',
-            subject: 'Build #${env.BUILD_NUMBER} - ${env.BUILD_ENV}',
-            to: 'amitayn@rafael.co.il'
-        )       
+             
     }
 }

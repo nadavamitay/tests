@@ -1,11 +1,7 @@
 
 
 node {
-    
-    parameters ([
-        string(name: 'BUILD_ENV', defaultValue: '', description: 'Specify which component to build. Leave empty to build all.')
-    ])
-    
+        
     stage ("initialization") {
         
         print("Initializing pipeline...")    

@@ -1,0 +1,44 @@
+
+
+node {
+    
+    parameters ([
+        string(name: 'BUILD_ENV', defaultValue: '', description: 'Specify which component to build. Leave empty to build all.')
+    ])
+    
+    stage ("initialization") {
+        
+        print("Initializing pipeline...")    
+        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/nadavamitay/tests.git']])
+    }
+    
+    stage ("building"){
+        
+        print("Building the project...")
+        def parallelTasks = [:]
+        
+        if ( env.BUILD_ENV == "componentA" || env.BUILD_ENV == ""){
+            parallelTasks["Building component A"] = {
+                print("Building component A")
+            }
+        }
+        
+        if ( env.BUILD_ENV == "componentB" || env.BUILD_ENV == ""){
+            parallelTasks["Building component B"] = {
+                print("Building component B")                
+            }
+        }
+
+        parallel parallelTasks
+    }
+    
+    stage ("post-build"){
+        archiveArtifacts artifacts: '**/README.md', allowEmptyArchive: true
+        
+        emailext (
+            body: 'The build is complete. Check the build details for more information.',
+            subject: 'Build #${env.BUILD_NUMBER} - ${env.BUILD_ENV}',
+            to: 'amitayn@rafael.co.il'
+        )       
+    }
+}
